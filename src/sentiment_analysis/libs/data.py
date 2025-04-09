@@ -91,7 +91,7 @@ def prepare_data(df):
 def create_bow_features(
     train_data, 
     test_data=None,
-    max_features=3000,
+    max_features=6000,
     ngram_range=(1, 1)
 ):
     """

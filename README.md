@@ -5,11 +5,9 @@ A machine learning system that classifies tweets as positive, negative, or neutr
 
 ![Application Demo](./assets/application_demo_1.png)
 ![Application Demo](./assets/application_demo_2.png)
+
 ## Dataset
-The dataset contains labeled tweets from [Kaggle](https://www.kaggle.com/datasets/abhi8923shriv/sentiment-analysis-dataset) with automatic sentiment labeling based on emoticons:
-- Positive emoticons (e.g., :)) → positive sentiment
-- Negative emoticons (e.g., :() → negative sentiment
-- Emoticons were removed from the final dataset
+The dataset contains labeled tweets from [Kaggle](https://www.kaggle.com/datasets/abhi8923shriv/sentiment-analysis-dataset) 
 
 The data includes tweet text, sentiment labels, and metadata such as time of posting, user demographics, and geographic information.
 
