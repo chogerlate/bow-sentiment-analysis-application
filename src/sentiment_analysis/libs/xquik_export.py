@@ -19,7 +19,9 @@ def parse_xquik_export(raw_export: str, filename: str = "export.json") -> list[s
 
     try:
         parsed = json.loads(raw_export)
-    except json.JSONDecodeError:
+    except json.JSONDecodeError as exc:
+        if lowered_name.endswith(".json"):
+            raise ValueError("Xquik JSON export contains invalid JSON.") from exc
         return _parse_jsonl(raw_export)
 
     return _texts_from_records(_records_from_json(parsed))

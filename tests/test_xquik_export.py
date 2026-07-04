@@ -26,3 +26,12 @@ def test_reject_csv_without_text_column() -> None:
         assert "CSV export needs" in str(exc)
     else:
         raise AssertionError("expected missing text column to fail")
+
+
+def test_report_invalid_json_file_as_json() -> None:
+    try:
+        parse_xquik_export('{"tweets": [', "tweets.json")
+    except ValueError as exc:
+        assert "JSON export" in str(exc)
+    else:
+        raise AssertionError("expected malformed JSON to fail")
