@@ -21,6 +21,7 @@ The data includes tweet text, sentiment labels, and metadata such as time of pos
 The included Streamlit application provides an intuitive interface for sentiment analysis:
 
 - Real-time tweet sentiment prediction
+- Optional Xquik JSON, JSONL, or CSV export import for choosing existing tweet text
 - Visualization of confidence scores
 - Model selection capability
 - Processed text display
@@ -30,6 +31,11 @@ The included Streamlit application provides an intuitive interface for sentiment
 2. Install dependencies: `pip install -r requirements.txt`
 3. Run the training pipeline: `python -m sentiment_analysis.main`
 4. Launch the web app: `streamlit run src/sentiment_analysis/app.py`
+
+## Xquik Export Import
+Use the app upload control to load tweets exported from Xquik as JSON, JSONL, or CSV.
+The parser reads common text fields such as `text`, `tweet`, `full_text`, `content`, and `body`,
+then lets you choose an imported tweet before running the existing sentiment model.
 
 ## Use Cases
 - Brand reputation monitoring
