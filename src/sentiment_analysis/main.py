@@ -2,10 +2,8 @@
 
 import os
 import pickle
-from pathlib import Path
 import hydra
-from omegaconf import DictConfig, OmegaConf
-import pandas as pd
+from omegaconf import DictConfig
 
 from sentiment_analysis.libs.data import load_data, prepare_data, create_bow_features, init_nltk
 from sentiment_analysis.libs.models import train_model
@@ -18,7 +16,7 @@ def create_directories(config: DictConfig):
     os.makedirs(config.paths.models, exist_ok=True)
     os.makedirs(config.paths.visualizations, exist_ok=True)
 
-@hydra.main(version_base=None, config_path="../../configs", config_name="config")
+@hydra.main(version_base=None, config_path="configs", config_name="config")
 def main(config: DictConfig) -> None:
     """Train, evaluate, and save the configured sentiment models."""
     try:

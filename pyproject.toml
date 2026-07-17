@@ -18,7 +18,7 @@ dependencies = [
 ]
 
 [project.scripts]
-sentiment-train = "sentiment_analysis.train:main"
+sentiment-train = "sentiment_analysis.main:main"
 
 [build-system]
 requires = ["hatchling"]

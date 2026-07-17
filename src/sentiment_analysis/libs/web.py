@@ -5,12 +5,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pickle
-from pathlib import Path
 from sentiment_analysis.libs.data import normalize_text
 from sentiment_analysis.libs.xquik_export import parse_xquik_export
 import os
 import hydra
-from omegaconf import DictConfig
 
 def load_model(model_path):
     """
@@ -65,12 +63,14 @@ def create_app():
         st.write("This tool analyzes tweet sentiment as positive, negative, or neutral.")
         
     try:
-        try:
-            hydra.core.global_hydra.GlobalHydra.instance().clear()
-        except:
-            pass
+        global_hydra = hydra.core.global_hydra.GlobalHydra.instance()
+        if global_hydra.is_initialized():
+            global_hydra.clear()
         
-        hydra.initialize(version_base=None, config_path="../../../configs")
+        hydra.initialize_config_module(
+            version_base=None,
+            config_module="sentiment_analysis.configs",
+        )
         config = hydra.compose(config_name="config")
         
         model_paths = {

@@ -1,0 +1,46 @@
+paths:
+  artifacts: /home/chogerlate/Documents/github/sentiment_analysis/artifacts
+  models: ${paths.artifacts}/models
+  visualizations: ${paths.artifacts}/visualizations
+  dataset: /home/chogerlate/Documents/github/sentiment_analysis/dataset
+  train_data: ${paths.dataset}/train.csv
+  test_data: ${paths.dataset}/test.csv
+
+data:
+  test_size: 0.2
+  random_state: 42
+
+models:
+  naive_bayes:
+    name: Naive Bayes
+    file: ${paths.models}/naive_bayes_model.pkl
+  logistic_regression:
+    name: Logistic Regression
+    file: ${paths.models}/logistic_regression_model.pkl
+  random_forest:
+    name: Random Forest
+    file: ${paths.models}/random_forest_model.pkl
+  best_model:
+    file: ${paths.models}/best_model.pkl
+  vectorizer:
+    file: ${paths.models}/vectorizer.pkl
+
+visualizations:
+  sentiment_distribution:
+    file: ${paths.visualizations}/sentiment_distribution.png
+  confusion_matrix:
+    file: ${paths.visualizations}/best_model_confusion_matrix.png
+  model_comparison:
+    file: ${paths.visualizations}/model_comparison.png
+
+web:
+  model_paths:
+    best_model: ${paths.models}/best_model.pkl
+    naive_bayes: ${paths.models}/naive_bayes_model.pkl
+    logistic_regression: ${paths.models}/logistic_regression_model.pkl
+    random_forest: ${paths.models}/random_forest_model.pkl
+  vectorizer_path: ${paths.models}/vectorizer.pkl
+  sentiment_colors:
+    positive: "#28a745"
+    negative: "#dc3545"
+    neutral: "#6c757d"
