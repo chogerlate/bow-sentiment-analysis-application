@@ -1,3 +1,5 @@
+"""Train and evaluate the configured sentiment-analysis models."""
+
 import os
 import pickle
 from pathlib import Path
@@ -12,11 +14,13 @@ from sentiment_analysis.libs.visualization import visualize_confusion_matrix, vi
 from sklearn.model_selection import train_test_split
 
 def create_directories(config: DictConfig):
+    """Create model and visualization output directories."""
     os.makedirs(config.paths.models, exist_ok=True)
     os.makedirs(config.paths.visualizations, exist_ok=True)
 
 @hydra.main(version_base=None, config_path="../../configs", config_name="config")
 def main(config: DictConfig) -> None:
+    """Train, evaluate, and save the configured sentiment models."""
     try:
         print("Initializing training process...")
         create_directories(config)

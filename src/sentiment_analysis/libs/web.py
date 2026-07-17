@@ -1,3 +1,5 @@
+"""Render the Streamlit sentiment-analysis application."""
+
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -54,6 +56,7 @@ def predict_sentiment(text, model, vectorizer):
     probabilities = model.predict_proba(features)[0]
     return prediction, probabilities, processed_text
 def create_app():
+    """Render the interactive sentiment-analysis application."""
     st.set_page_config(page_title="Twitter Sentiment Analysis", layout="wide", initial_sidebar_state="expanded")
     
     with st.sidebar:

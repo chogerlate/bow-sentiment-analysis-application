@@ -1,10 +1,12 @@
+"""Parse tweet text from Xquik JSON, JSONL, and CSV exports."""
+
 import csv
 import io
 import json
 from typing import Any, Optional
 
 
-TEXT_FIELDS = ("text", "tweet", "full_text", "content", "body")
+TEXT_FIELDS = ("text", "tweet", "tweet_text", "full_text", "content", "body")
 
 
 def parse_xquik_export(raw_export: str, filename: str = "export.json") -> list[str]:
@@ -29,18 +31,27 @@ def parse_xquik_export(raw_export: str, filename: str = "export.json") -> list[s
 
 
 def _parse_csv(raw_export: str) -> list[str]:
+    """Return normalized tweet text from a CSV export."""
     reader = csv.DictReader(io.StringIO(raw_export))
     if reader.fieldnames is None:
         return []
 
     text_field = _find_text_field(reader.fieldnames)
     if text_field is None:
-        raise ValueError("Xquik CSV export needs a text, tweet, full_text, content, or body column.")
+        raise ValueError(
+            "Xquik CSV export needs a text, tweet, tweet_text, full_text, content, or body column."
+        )
 
-    return [_clean_text(row.get(text_field)) for row in reader if _clean_text(row.get(text_field))]
+    texts: list[str] = []
+    for row in reader:
+        cleaned = _clean_text(row.get(text_field))
+        if cleaned:
+            texts.append(cleaned)
+    return texts
 
 
 def _parse_jsonl(raw_export: str) -> list[str]:
+    """Return normalized tweet text from a JSONL export."""
     records: list[dict[str, Any]] = []
     for line in raw_export.splitlines():
         stripped = line.strip()
@@ -57,6 +68,7 @@ def _parse_jsonl(raw_export: str) -> list[str]:
 
 
 def _records_from_json(parsed: Any) -> list[dict[str, Any]]:
+    """Extract record dictionaries from common Xquik JSON envelopes."""
     if isinstance(parsed, list):
         return [item for item in parsed if isinstance(item, dict)]
     if isinstance(parsed, dict):
@@ -69,6 +81,7 @@ def _records_from_json(parsed: Any) -> list[dict[str, Any]]:
 
 
 def _texts_from_records(records: list[dict[str, Any]]) -> list[str]:
+    """Extract the first supported text field from each record."""
     texts: list[str] = []
     for record in records:
         text_field = _find_text_field(record.keys())
@@ -81,6 +94,7 @@ def _texts_from_records(records: list[dict[str, Any]]) -> list[str]:
 
 
 def _find_text_field(fields: Any) -> Optional[str]:
+    """Return the original name of the first supported text field."""
     normalized_fields = {str(field).lower(): str(field) for field in fields}
     for candidate in TEXT_FIELDS:
         if candidate in normalized_fields:
@@ -89,6 +103,7 @@ def _find_text_field(fields: Any) -> Optional[str]:
 
 
 def _clean_text(value: Any) -> str:
+    """Normalize whitespace in a string value or return an empty string."""
     if not isinstance(value, str):
         return ""
     return " ".join(value.split())

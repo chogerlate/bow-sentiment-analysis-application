@@ -34,7 +34,7 @@ The included Streamlit application provides an intuitive interface for sentiment
 
 ## Xquik Export Import
 Use the app upload control to load tweets exported from Xquik as JSON, JSONL, or CSV.
-The parser reads common text fields such as `text`, `tweet`, `full_text`, `content`, and `body`,
+The parser reads common text fields such as `text`, `tweet`, `tweet_text`, `full_text`, `content`, and `body`,
 then lets you choose an imported tweet before running the existing sentiment model.
 
 ## Use Cases
