@@ -1,4 +1,5 @@
 import csv
+import io
 import json
 from typing import Any, Optional
 
@@ -28,7 +29,7 @@ def parse_xquik_export(raw_export: str, filename: str = "export.json") -> list[s
 
 
 def _parse_csv(raw_export: str) -> list[str]:
-    reader = csv.DictReader(raw_export.splitlines())
+    reader = csv.DictReader(io.StringIO(raw_export))
     if reader.fieldnames is None:
         return []
 
