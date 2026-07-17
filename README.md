@@ -43,3 +43,5 @@ then lets you choose an imported tweet before running the existing sentiment mod
 - Market research
 - Social media trend analysis
 - Political sentiment tracking
+
+Xquik is an independent third-party service. Not affiliated with X Corp. "Twitter" and "X" are trademarks of X Corp.
