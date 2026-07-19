@@ -32,6 +32,8 @@ The included Streamlit application provides an intuitive interface for sentiment
 3. Run the training pipeline: `python -m sentiment_analysis.main`
 4. Launch the web app: `streamlit run src/sentiment_analysis/app.py`
 
+Run these commands from the repository root. Training reads `dataset/` and writes generated files to `artifacts/` by default. Override either Hydra path when using another location.
+
 ## Xquik Export Import
 Use the app upload control to load tweets exported from Xquik as JSON, JSONL, or CSV.
 The parser reads common text fields such as `text`, `tweet`, `tweet_text`, `full_text`, `content`, and `body`,

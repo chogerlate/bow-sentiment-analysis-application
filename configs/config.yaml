@@ -1,8 +1,8 @@
 paths:
-  artifacts: /home/chogerlate/Documents/github/sentiment_analysis/artifacts
+  artifacts: artifacts
   models: ${paths.artifacts}/models
   visualizations: ${paths.artifacts}/visualizations
-  dataset: /home/chogerlate/Documents/github/sentiment_analysis/dataset
+  dataset: dataset
   train_data: ${paths.dataset}/train.csv
   test_data: ${paths.dataset}/test.csv
 
