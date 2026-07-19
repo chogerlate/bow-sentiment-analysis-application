@@ -1,9 +1,9 @@
+"""Train and evaluate the configured sentiment-analysis models."""
+
 import os
 import pickle
-from pathlib import Path
 import hydra
-from omegaconf import DictConfig, OmegaConf
-import pandas as pd
+from omegaconf import DictConfig
 
 from sentiment_analysis.libs.data import load_data, prepare_data, create_bow_features, init_nltk
 from sentiment_analysis.libs.models import train_model
@@ -12,11 +12,13 @@ from sentiment_analysis.libs.visualization import visualize_confusion_matrix, vi
 from sklearn.model_selection import train_test_split
 
 def create_directories(config: DictConfig):
+    """Create model and visualization output directories."""
     os.makedirs(config.paths.models, exist_ok=True)
     os.makedirs(config.paths.visualizations, exist_ok=True)
 
-@hydra.main(version_base=None, config_path="../../configs", config_name="config")
+@hydra.main(version_base=None, config_path="configs", config_name="config")
 def main(config: DictConfig) -> None:
+    """Train, evaluate, and save the configured sentiment models."""
     try:
         print("Initializing training process...")
         create_directories(config)
@@ -69,13 +71,16 @@ def main(config: DictConfig) -> None:
             model = train_model(X_train_split, y_train_split, model_type)
             
             print(f"Evaluating {model_name} model on validation set...")
-            accuracy, report, conf_matrix = evaluate_model(model, X_val_split, y_val_split)
+            accuracy, report, conf_matrix, class_names = evaluate_model(
+                model, X_val_split, y_val_split
+            )
             
             models_results[model_name] = {
                 'model': model,
                 'accuracy': accuracy,
                 'report': report,
-                'conf_matrix': conf_matrix
+                'conf_matrix': conf_matrix,
+                'class_names': class_names
             }
             
             print(f"{model_name} Validation Accuracy: {accuracy:.4f}")
@@ -83,12 +88,15 @@ def main(config: DictConfig) -> None:
             print(report)
             
             print(f"Evaluating {model_name} model on test set...")
-            test_accuracy, test_report, test_conf_matrix = evaluate_model(model, X_test, y_test)
+            test_accuracy, test_report, test_conf_matrix, test_class_names = evaluate_model(
+                model, X_test, y_test
+            )
             
             test_results[model_name] = {
                 'accuracy': test_accuracy,
                 'report': test_report,
-                'conf_matrix': test_conf_matrix
+                'conf_matrix': test_conf_matrix,
+                'class_names': test_class_names
             }
             
             print(f"{model_name} Test Accuracy: {test_accuracy:.4f}")
@@ -114,7 +122,7 @@ def main(config: DictConfig) -> None:
         cm_file = config.visualizations.confusion_matrix.file
         visualize_confusion_matrix(
             best_model_results['conf_matrix'], 
-            train_df['sentiment'].unique(),
+            best_model_results['class_names'],
             cm_file
         )
         print(f"Confusion matrix visualization saved as '{cm_file}'")
@@ -122,7 +130,7 @@ def main(config: DictConfig) -> None:
         test_cm_file = os.path.join(os.path.dirname(cm_file), "test_confusion_matrix.png")
         visualize_confusion_matrix(
             test_results[best_model_name]['conf_matrix'],
-            test_df['sentiment'].unique(),
+            test_results[best_model_name]['class_names'],
             test_cm_file
         )
         print(f"Test confusion matrix visualization saved as '{test_cm_file}'")

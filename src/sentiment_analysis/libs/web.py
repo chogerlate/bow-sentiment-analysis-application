@@ -1,13 +1,14 @@
+"""Render the Streamlit sentiment-analysis application."""
+
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pickle
-from pathlib import Path
 from sentiment_analysis.libs.data import normalize_text
+from sentiment_analysis.libs.xquik_export import parse_xquik_export
 import os
 import hydra
-from omegaconf import DictConfig
 
 def load_model(model_path):
     """
@@ -53,6 +54,7 @@ def predict_sentiment(text, model, vectorizer):
     probabilities = model.predict_proba(features)[0]
     return prediction, probabilities, processed_text
 def create_app():
+    """Render the interactive sentiment-analysis application."""
     st.set_page_config(page_title="Twitter Sentiment Analysis", layout="wide", initial_sidebar_state="expanded")
     
     with st.sidebar:
@@ -61,12 +63,14 @@ def create_app():
         st.write("This tool analyzes tweet sentiment as positive, negative, or neutral.")
         
     try:
-        try:
-            hydra.core.global_hydra.GlobalHydra.instance().clear()
-        except:
-            pass
+        global_hydra = hydra.core.global_hydra.GlobalHydra.instance()
+        if global_hydra.is_initialized():
+            global_hydra.clear()
         
-        hydra.initialize(version_base=None, config_path="../../../configs")
+        hydra.initialize_config_module(
+            version_base=None,
+            config_module="sentiment_analysis.configs",
+        )
         config = hydra.compose(config_name="config")
         
         model_paths = {
@@ -98,16 +102,38 @@ def create_app():
         model = load_model(available_models[selected_model_name])
         
         st.header("Tweet Analysis")
-        tweet_text = st.text_area("Enter a tweet to analyze:", height=100)
+        imported_tweets: list[str] = []
+        uploaded_export = st.file_uploader(
+            "Import a Xquik tweet export:",
+            type=["csv", "json", "jsonl"],
+        )
+        if uploaded_export is not None:
+            try:
+                imported_tweets = parse_xquik_export(
+                    uploaded_export.getvalue().decode("utf-8"),
+                    uploaded_export.name,
+                )
+            except UnicodeDecodeError:
+                st.warning("Xquik export must be encoded as UTF-8.")
+            except ValueError as exc:
+                st.warning(str(exc))
+
+        selected_import = ""
+        if imported_tweets:
+            selected_import = st.selectbox("Choose an imported tweet:", imported_tweets)
+            st.caption(f"Loaded {len(imported_tweets)} tweets from the Xquik export.")
+
+        tweet_text = st.text_area("Enter a tweet to analyze:", value=selected_import, height=100)
         analyze_button = st.button("Analyze", type="primary", use_container_width=True)
         
         if analyze_button:
-            if not tweet_text:
+            clean_tweet_text = tweet_text.strip()
+            if not clean_tweet_text:
                 st.warning("Please enter some text to analyze.")
                 return
             
             with st.spinner("Analyzing sentiment..."):
-                prediction, probabilities, processed_text = predict_sentiment(tweet_text, model, vectorizer)
+                prediction, probabilities, processed_text = predict_sentiment(clean_tweet_text, model, vectorizer)
             
             sentiment_color = {
                 "positive": "#28a745",
